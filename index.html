@@ -1,1 +1,112 @@
-index.html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Ticketing App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #222;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            width: 300px;
+            margin: auto;
+            background: #333;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        select, button {
+            width: 100%;
+            margin: 10px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+        }
+        .seats {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            margin: 10px 0;
+        }
+        .seat {
+            width: 30px;
+            height: 30px;
+            background: gray;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .seat.selected {
+            background: green;
+        }
+        .seat.occupied {
+            background: red;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Movie Ticketing App</h2>
+    <div class="container">
+        <label for="movie">Select Movie:</label>
+        <select id="movie">
+            <option value="10">Movie A - $10</option>
+            <option value="15">Movie B - $15</option>
+        </select>
+        <div class="seats" id="seating">
+            <!-- Seats will be generated here -->
+        </div>
+        <p>Total Price: $<span id="total">0</span></p>
+        <button id="book">Book Tickets</button>
+    </div>
+    <script>
+        const seating = document.getElementById("seating");
+        const totalSpan = document.getElementById("total");
+        const movieSelect = document.getElementById("movie");
+        const bookBtn = document.getElementById("book");
+        let selectedSeats = new Set();
+
+        function generateSeats() {
+            seating.innerHTML = "";
+            for (let i = 0; i < 20; i++) {
+                const seat = document.createElement("div");
+                seat.classList.add("seat");
+                seat.addEventListener("click", () => toggleSeat(i, seat));
+                seating.appendChild(seat);
+            }
+        }
+
+        function toggleSeat(index, seat) {
+            if (selectedSeats.has(index)) {
+                selectedSeats.delete(index);
+                seat.classList.remove("selected");
+            } else {
+                selectedSeats.add(index);
+                seat.classList.add("selected");
+            }
+            updateTotal();
+        }
+
+        function updateTotal() {
+            const price = parseInt(movieSelect.value);
+            totalSpan.textContent = selectedSeats.size * price;
+        }
+
+        movieSelect.addEventListener("change", updateTotal);
+        bookBtn.addEventListener("click", () => {
+            if (selectedSeats.size > 0) {
+                alert("Tickets booked successfully!");
+                selectedSeats.clear();
+                generateSeats();
+                updateTotal();
+            } else {
+                alert("Please select at least one seat.");
+            }
+        });
+
+        generateSeats();
+    </script>
+</body>
+</html>
